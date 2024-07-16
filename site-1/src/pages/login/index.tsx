@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSetRecoilState } from "recoil";
 import { withRouter } from "next/router";
-import { adam_var_mi } from "../../lib/db";
 import { useRouter } from "next/router";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const defaultValue = {
   username: "",
@@ -35,6 +36,7 @@ const Login = (props: any) => {
       });
     };
   }, [props.router, setTheme]);
+
   const {
     register,
     formState: { errors, isDirty, isValid },
@@ -43,18 +45,16 @@ const Login = (props: any) => {
     defaultValues: defaultValue,
   });
 
-  const [eposta, epostaDegistir] = useState("sdfg");
-  const [sifre, sifreDegistir] = useState("wret");
+  const [eposta, epostaDegistir] = useState("");
+  const [sifre, sifreDegistir] = useState("");
   const [password, setPassword] = useState(true);
 
   function handleEPostaChange(e: any) {
     epostaDegistir(e.target.value);
-    //console.log("Yeni Eposta : " + eposta)
   }
 
   function handleSifreChange(e: any) {
     sifreDegistir(e.target.value);
-    //console.log("Yeni Eposta : " + eposta)
   }
 
   const handleSubmit = async (event: any) => {
@@ -63,50 +63,29 @@ const Login = (props: any) => {
     const varmiURL = `http://localhost:3000/api/kullanici/?eposta=${eposta}&sifre=${sifre}`;
 
     try {
-      // console.log('MEHMET TOPRAK');
-      // await fetch(varmiURL);
-      // console.log('MEHMET TOPRAK');
       var resp = await fetch(varmiURL);
-      console.log(resp);
       if (resp.status === 200) {
-        // await router.push('/About').then(() => {
-        //   console.log('Navigation complete!');
-        // });
-        // Response.redirect(new URL('http://localhost:3000/dashboard'));
-
         props.router.push("/dashboard");
         setItem("userdata", {
           loggedIn: true,
         });
         console.log("girildi");
+      } else {
+        toast.error("Yanlış kullanıcı adı veya şifre");
       }
     } catch (error) {
       console.log("Hata : " + error);
+      toast.error("Bir hata oluştu. Lütfen tekrar deneyin.");
     }
-
-    // async function fetchKullaniciVarMiJSON() {
-    //   const response = await fetch(varmiURL);
-    //   const movies = await response.json();
-    //   return movies;
-    // }
-
-    // fetchKullaniciVarMiJSON().then(sonuc => {
-    //   console.log("Geri DÃ¶nen : " + JSON.stringify(sonuc)); // fetched movies
-    // });
-
-    // var a = await adam_var_mi(eposta,sifre);
-
-    // console.log(a);
-
-    // adam_var_mi()
   };
 
   return (
     <div className="login-box container" style={{ marginTop: "10%" }}>
+      <ToastContainer />
       <div className="card card-outline card-primary">
         <div className="card-header text-center">
           <div className="h1">
-            <b>ADMIN LTE </b>APP
+            <b>SENSOR </b>APP
           </div>
         </div>
         <div className="card-body">
@@ -117,6 +96,7 @@ const Login = (props: any) => {
               name="username"
               type="text"
               onChange={handleEPostaChange}
+              placeholder="Username"
               value={eposta}
               iconFormGroup="fas fa-envelope"
               formGroup
@@ -128,7 +108,7 @@ const Login = (props: any) => {
               value={sifre}
               onChange={handleSifreChange}
               register={register("password")}
-              placeholder="Silahkan Masukan Password"
+              placeholder="Password"
               iconFormGroup={password ? "fas fa-eye-slash" : "fas fa-eye"}
               customeCss={password ? "password-hide-css" : ""}
               btnAction={() => setPassword(!password)}

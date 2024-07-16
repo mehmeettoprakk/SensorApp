@@ -27,9 +27,9 @@ async function main(sorgu: any) {
 
   try {
     conn = await mariadb.createConnection({
-      host: "127.0.0.1",
-      user: "root",
-      password: "",
+      host: "civa.gen.tr",
+      user: "sensor",
+      password: "iCZV86UA!cmHKAiT",
       database: "sensor",
     });
 
