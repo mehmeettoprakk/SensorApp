@@ -1,2 +1,2 @@
-# SensorApp
- Sensör application
+# SensorUygulama
+Sensor uygulamasi
